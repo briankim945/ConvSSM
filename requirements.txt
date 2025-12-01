@@ -4,7 +4,7 @@ ipdb
 pyyaml
 moviepy==1.0.3
 wandb==0.14.0
-av==10.0.0
+av==11.0.0
 flax==0.6.1
 chex==0.1.6
 gcsfs==2022.7.1
