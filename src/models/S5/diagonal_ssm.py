@@ -180,10 +180,10 @@ def init_CV(init_fun, rng, shape, V):
 
 
 class S5SSM(nn.Module):
-    Lambda_re_init: np.DeviceArray
-    Lambda_im_init: np.DeviceArray
-    V: np.DeviceArray
-    Vinv: np.DeviceArray
+    Lambda_re_init: jax.Array
+    Lambda_im_init: jax.Array
+    V: jax.Array
+    Vinv: jax.Array
     clip_eigs: bool
     parallel: bool  # Compute scan in parallel
 

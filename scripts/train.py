@@ -44,6 +44,11 @@ from src.models.sampling import sample_convSSM_noVQ, sample_transformer_noVQ, sa
 from src import runtime_metrics
 
 
+os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"]="false"
+# os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"]=".XX"
+os.environ["XLA_PYTHON_CLIENT_ALLOCATOR"]="platform"
+
+
 def main():
     rng = random.PRNGKey(config.seed)
     rng, init_rng = random.split(rng)
@@ -150,13 +155,13 @@ def main():
     p_train_step = jax.pmap(train_step, axis_name='batch')
     state, schedule_fn = init_model_state(init_rng, model, batch, config)
     if config.ckpt is not None:
-        state = checkpoints.restore_checkpoint(osp.join(config.ckpt, 'checkpoints'), state)
+        state = checkpoints.restore_checkpoint(os.path.abspath(osp.join(config.ckpt, 'checkpoints')), state)
         print('Restored from checkpoint')
 
     iteration = int(state.step)
     state = jax_utils.replicate(state)
 
-    ckpt_dir = osp.join(config.output_dir, 'checkpoints')
+    ckpt_dir = os.path.abspath(osp.join(config.output_dir, 'checkpoints'))
 
     rngs = random.split(rng, jax.local_device_count())
 

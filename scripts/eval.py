@@ -135,7 +135,7 @@ def main():
 
     state, schedule_fn = init_model_state(init_rng, model, batch, config)
     if config.ckpt is not None:
-        state = checkpoints.restore_checkpoint(osp.join(config.ckpt, 'checkpoints'), state)
+        state = checkpoints.restore_checkpoint(os.path.abspath(osp.join(config.ckpt, 'checkpoints')), state)
         print('Restored from checkpoint')
 
     state = jax_utils.replicate(state)
@@ -252,6 +252,7 @@ if __name__ == '__main__':
         args.output_dir = osp.join(root_folder, args.output_dir)
 
     config = yaml.safe_load(open(args.config, 'r'))
+    config['data_path'] = args.data_dir
     if os.environ.get('DEBUG') == '1':
         config['viz_interval'] = 10
         config['save_interval'] = 10

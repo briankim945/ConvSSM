@@ -119,7 +119,9 @@ def generate_moving_mnist(num_digits=2, n_frames_total=30, n_seq=10000, image_si
             canvas[frame_idx, top:bottom, left:right] = np.maximum(canvas[frame_idx, top:bottom, left:right], digit_image)
         if seq_idx == 0:
             for frame_idx in range(n_frames_total):
-                imageio.imwrite('tmp/out_%d.jpg'%(frame_idx), canvas[frame_idx])
+                res_uint8 = (canvas[frame_idx] - canvas[frame_idx].min()) / (canvas[frame_idx].max() - canvas[frame_idx].min())
+                res_uint8 = (255 * res_uint8).astype(np.uint8)
+                imageio.imwrite('tmp/out_%d.jpg'%(frame_idx), res_uint8)
                 #scipy.misc.imsave('tmp/out_%d.jpg'%(frame_idx), canvas[frame_idx])
         data[seq_idx] = canvas
         print(seq_idx, data[seq_idx].max())

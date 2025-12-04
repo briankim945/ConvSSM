@@ -1,0 +1,8 @@
+logs
+data/moving-mnist-pytorch/tmp
+datasets
+*.pyc
+*.gz
+
+PKG-INFO
+*.txt

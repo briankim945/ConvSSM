@@ -11,6 +11,7 @@ import random
 import numpy as np
 import jax
 from flax.training import train_state
+from flax.core import FrozenDict
 from flax.core.frozen_dict import freeze
 import optax
 
@@ -69,8 +70,13 @@ def init_model_state(rng_key, model, sample, config):
     variables = model.init(
         rngs={k: rng_key for k in ['params', *config.rng_keys]},
         **{k: sample[k] for k in config.batch_keys}
-    ).unfreeze()
-    params = freeze(variables.pop('params'))
+    )
+    variables = FrozenDict(variables)
+    variables.unfreeze()
+    try:
+        params = freeze(variables.pop('params'))
+    except:
+        params = freeze(variables.pop('params')[0])
     model_state = variables
     print_model_size(params)
 
