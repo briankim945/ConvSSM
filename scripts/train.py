@@ -85,7 +85,8 @@ def main():
 
     if config.model in ["teco_convS5", "convS5", "teco_S5", "S5"]:
         model_par_eval = model(parallel=True, training=False)
-        model_seq_eval = model(parallel=False, training=False)
+        # model_seq_eval = model(parallel=False, training=False)
+        model_seq_eval = model(parallel=True, training=False)
         model = model(parallel=True, training=True)
 
         p_observe = jax.pmap(partial(sample_convSSM._observe,
@@ -135,9 +136,10 @@ def main():
         p_decode = None
 
         
-    elif config.model in ["convS5_noVQ", "convLSTM_noVQ"]:
+    elif config.model in ["convS5_noVQ", "convS5fft_noVQ", "convLSTM_noVQ"]:
         model_par_eval = model(parallel=True, training=False)
-        model_seq_eval = model(parallel=False, training=False)
+        # model_seq_eval = model(parallel=False, training=False)
+        model_seq_eval = model(parallel=True, training=False)
         model = model(parallel=True, training=True)
 
         p_observe = jax.pmap(partial(sample_convSSM_noVQ._observe,
@@ -192,7 +194,7 @@ def main():
                               test_loader, steps_per_eval,
                               config.action_conditioned_1, config.open_loop_ctx_1, p_observe, p_imagine, p_encode, p_decode, config.eval_seq_len_1)
                 
-            elif config.model in ["convS5_noVQ", 'convLSTM_noVQ']:
+            elif config.model in ["convS5_noVQ", "convS5fft_noVQ", 'convLSTM_noVQ']:
                 visualize_noVQ(model, iteration, state, test_loader, config.action_conditioned_1, config.open_loop_ctx_1, 0, p_observe, p_imagine, p_encode, p_decode, config.eval_seq_len_1)
                 visualize_noVQ(model, iteration, state, test_loader, config.action_conditioned_2, config.open_loop_ctx_2, 1, p_observe, p_imagine, p_encode, p_decode, config.eval_seq_len_2)
 
@@ -315,7 +317,7 @@ def visualize(model, iteration, state, test_loader, action_conditioned, open_loo
 def visualize_noVQ(model, iteration, state, test_loader, action_conditioned, open_loop_ctx, log_num, p_observe, p_imagine, p_encode, p_decode, eval_seq_len):
     batch = next(test_loader)
 
-    if config.model in ["convS5_noVQ", 'convLSTM_noVQ']:
+    if config.model in ["convS5_noVQ", "convS5fft_noVQ", 'convLSTM_noVQ']:
         predictions, real = sample_convSSM_noVQ.sample(model, state, batch['video'], batch['actions'], action_conditioned, open_loop_ctx, p_observe, p_imagine, p_encode, p_decode, eval_seq_len)
     else:
         predictions, real = sample_transformer_noVQ.sample(model, state, batch['video'], batch['actions'], action_conditioned, open_loop_ctx, p_observe, p_imagine, p_encode, p_decode, eval_seq_len)
@@ -392,7 +394,7 @@ def validate_noVQ(p_get_eval_metrics, model, iteration, state, test_loader, step
     for batch_idx in range(steps_per_eval):
         batch = next(test_loader)
 
-        if config.model in ["convS5_noVQ", 'convLSTM_noVQ']:
+        if config.model in ["convS5_noVQ", "convS5fft_noVQ", 'convLSTM_noVQ']:
             predictions, real = sample_convSSM_noVQ.sample(model, state, batch['video'], batch['actions'],
                                                            action_conditioned, open_loop_ctx, p_observe,
                                                            p_imagine, p_encode, p_decode, eval_seq_len)

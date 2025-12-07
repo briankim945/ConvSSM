@@ -28,7 +28,7 @@ rng_keys: ["dropout", "sample"]
 batch_keys: ["video", "actions"]
 
 # Model
-model: "convS5_noVQ"
+model: "convS5fft_noVQ"
 
 loss_weight: 0.5
 
@@ -59,6 +59,7 @@ ssm:
   ssm_size: 64 #256
   blocks: 1
   clip_eigs: True
+  A_kernel_size: 3
   B_kernel_size: 3
   C_kernel_size: 3
   D_kernel_size: 3

@@ -21,6 +21,7 @@ import jax.numpy as jnp
 from src.models.sequence_models.VQ.S5 import S5
 from src.models.sequence_models.noVQ.convLSTM import CONVLSTM_NOVQ
 from src.models.sequence_models.noVQ.convS5 import CONVS5_NOVQ
+from src.models.sequence_models.noVQ.convS5fft import CONVS5_FFT_NOVQ
 from src.models.sequence_models.VQ.teco_S5 import TECO_S5
 from src.models.sequence_models.VQ.teco_convS5 import TECO_CONVS5
 from src.models.sequence_models.VQ.convS5 import CONVS5
@@ -72,7 +73,7 @@ def load_ckpt(ckpt_path, replicate=True, return_config=False,
     
     model = get_model(config, need_encode=need_encode)
     state = checkpoints.restore_checkpoint(osp.join(ckpt_path, 'checkpoints'), None)
-    if config.model in ['teco_convS5',  'convS5', 'teco_S5', 'S5', 'convS5_noVQ', 'convLSTM_noVQ']:
+    if config.model in ['teco_convS5',  'convS5', 'teco_S5', 'S5', 'convS5_noVQ', 'convLSTM_noVQ', 'convS5fft_noVQ']:
         state = TrainState(
             step=state['step'],
             params=state['params'],
@@ -128,6 +129,9 @@ def get_model(config, need_encode=None, xmap=False, **kwargs):
                         config=config, **kwargs)
     elif config.model == 'convS5_noVQ':
         model = partial(CONVS5_NOVQ,
+                        config=config, **kwargs)
+    elif config.model == 'convS5fft_noVQ':
+        model = partial(CONVS5_FFT_NOVQ,
                         config=config, **kwargs)
     elif config.model == 'teco_convS5':
         model = partial(TECO_CONVS5,
